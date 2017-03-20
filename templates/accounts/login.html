@@ -1,0 +1,54 @@
+{% extends "accounts/base.html" %}
+{% block content %}
+    <div class="jumbotron">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8">
+            <h1>Hello, world!</h1>
+          </div>
+          <div class="col-md-4">
+            <form id="signin_form">{% csrf_token %}
+            <h2 class="form-signin-heading">Login</h2>
+            </br>
+            <label for="username" class="sr-only">username</label>
+            <input type="text"  class="form-control" placeholder="username" required autofocus id="username">
+            </br>
+            <label for="password" class="sr-only">Password</label>
+            <input type="password"  class="form-control" placeholder="password" required id="password">
+            </br>
+            <button type="submit" class="btn  btn-primary "  >SigIn</button>
+          </form>
+         </div>
+      </div>
+    </div>
+  </div>
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <!--success: function(){
+    alert("login success")
+} Include all compiled plugins (below), or include individual files as needed -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <script type="text/javascript">
+  $(document).on('submit','#signin_form',function(e){
+    e.preventDefault();
+
+    $.ajax({
+        type:'POST',
+        url:'/login_user/',
+        data:{
+            username:$('#username').val(),
+            password:$('#password').val(),
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+        },success:function(response) {
+           window.location.href = "/home/";
+         },
+         error: function() {
+          alert("There was an error. Try again please!");
+        }
+
+    })
+})
+
+  </script>
+
+{% endblock %}

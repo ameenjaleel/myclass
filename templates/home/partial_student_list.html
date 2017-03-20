@@ -1,0 +1,22 @@
+{% for student in students %}
+  <tr>
+    <td>{{ student.student_name }}</td>
+    <td>{{ student.mark }}</td>
+    <td>
+      <button type="button"
+            class="btn btn-warning btn-sm js-update-book"
+            data-url="{% url 'delete_student' student.id %}">
+            <span class="glyphicon glyphicon-pencil"></span> Edit
+      </button>
+
+      <button type="button" class="btn btn-danger btn-sm js-delete-student"
+            data-url="{% url 'delete_student' student.id %}">
+            <span class="glyphicon glyphicon-trash"></span> Delete
+      </button>
+    </td>
+  </tr>
+{% empty %}
+  <tr>
+    <td colspan="7" class="text-center bg-warning">No student</td>
+  </tr>
+{% endfor %}

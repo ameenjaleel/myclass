@@ -1,0 +1,25 @@
+
+
+
+<form method="post"  class="js-student-create-form">
+  {% csrf_token %}
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h4 class="modal-title">Create new Student</h4>
+  </div>
+  <div class="modal-body">
+
+    <label for="new_classroom" class="sr-only">Name</label>
+    <input type="text"  class="form-control" placeholder="Student Name" required autofocus id="student_name">
+    </br>
+    <label for="new_classroom" class="sr-only">Mark</label>
+    <input type="text"  class="form-control" placeholder="Mark" required autofocus id="mark">
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button type="submit" class="btn btn-primary">Create</button>
+  </div>
+</form>

@@ -1,0 +1,185 @@
+{% extends "home/base.html" %}
+{% block content %}
+
+<h1 class="page-header">{{ classroom.classroom_title }}</h1>
+
+  <p>
+    <button type="button" class="btn btn-primary js-create-student"
+      data-url="{% url 'create_student' classroom.id %}">
+      <span class="glyphicon glyphicon-plus"></span>
+      Student
+    </button>
+
+    <button type="button" class="btn btn-primary js-remove-classroom"
+      data-url="{% url 'delete_classroom' classroom.id %}">
+      <span class="glyphicon glyphicon-trash"></span>
+      Remove Class
+    </button>
+  </p>
+  <div class="col-md-1"></div>
+  <div class="col-md-8">
+  <table class="table" id="student-table">
+
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Mark</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% include 'home/partial_student_list.html' %}
+    </tbody>
+  </table>
+</div>
+<div class="col-md-3"></div>
+  <!-- THE MODAL WE WILL BE USING -->
+  <div class="modal fade" id="modal-student">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      </div>
+    </div>
+
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+    $(function () {
+    //create classroom button click
+      $(".js-create-student").click(function () {
+        console.log("button working")
+        $.ajax({
+          url: '/create/{{ classroom.id }}/student/',
+          type: 'get',
+          dataType: 'json',
+          beforeSend: function () {
+            $("#modal-student").modal("show");
+          },
+          success: function (data) {
+            $("#modal-student .modal-content").html(data.html_form);
+            console.log("form retrived")
+          }
+        });
+      });
+
+    });
+
+
+    $("#modal-student").on("submit", ".js-student-create-form", function () {
+
+      //data sending create class
+        $.ajax({
+        url: '/create/{{ classroom.id }}/student/',
+        data:data = {
+            'student_name':$('#student_name').val(),
+            'mark':$('#mark').val(),
+            'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()
+          },
+        type: 'post',
+        dataType: 'json',
+        success: function (data) {
+          if (data.form_is_valid) {
+                $("#student-table tbody").html(data.html_student_list);
+                $("#modal-student").modal("hide");
+                }
+          else {
+            $("#modal-student .modal-content").html(data.html_form);
+          }
+        }
+      });
+      return false;
+    })
+
+$(function () {
+    //remove classroom button click
+      $(".js-remove-classroom").click(function () {
+        console.log("button working")
+        $.ajax({
+          url: '/classroom/{{ classroom.id }}/delete/',
+          type: 'get',
+          dataType: 'json',
+          beforeSend: function () {
+            $("#modal-student").modal("show");
+          },
+          success: function (data) {
+            $("#modal-student .modal-content").html(data.html_form);
+            console.log("form retrived")
+          }
+        });
+      });
+
+    });
+    $("#modal-student").on("submit", ".js-classroom-delete-form", function () {
+
+      //data sending
+        console.log("POST DLETE CLASSROMM WORKING")
+        $.ajax({
+        url: '/classroom/{{ classroom.id }}/delete/',
+        data:data = {
+                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()
+          },
+        type: 'post',
+        dataType: 'json',
+        success: function (data) {
+          if (data.form_is_valid) {
+                $("#modal-student").modal("hide");
+                window.location.href='/home/'
+                }
+          else {
+            $("#modal-student .modal-content").html(data.html_form);
+          }
+        }
+      });
+      return false;
+    })
+//delete student
+$(function () {
+    //remove  button click
+      $(".js-delete-student").click(function () {
+        //console.log("delete student button working"),
+        var btn = $(this);
+        $.ajax({
+          url: btn.attr("data-url"),
+          type: 'get',
+          dataType: 'json',
+          beforeSend: function () {
+            $("#modal-student").modal("show");
+          },
+          success: function (data) {
+            $("#modal-student .modal-content").html(data.html_form);
+            console.log("form retrived")
+          }
+        });
+      });
+
+    });
+    $("#modal-student").on("submit", ".js-student-delete-form", function () {
+        var form = $(this);
+      //data sending
+        //console.log("POST DLETE CLASSROMM WORKING"),
+        $.ajax({
+        url: form.attr("action"),
+        data:data = {
+                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()
+          },
+        type: 'post',
+        dataType: 'json',
+        success: function (data) {
+          if (data.form_is_valid) {
+                $("#modal-student").modal("hide");
+                }
+          else {
+            $("#modal-student .modal-content").html(data.html_form);
+          }
+        }
+      });
+      return false;
+    })
+
+
+    </script>
+
+
+{% endblock %}

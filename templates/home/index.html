@@ -1,0 +1,88 @@
+{% extends "home/base.html" %}
+{% block content %}
+
+<!-- classroom -->
+ <div class="row">
+    <div class="col-md-3">
+        <h3>Hello,{{ user.username }}</h3>
+        <p>
+        <button type="button" class="btn btn-primary js-create-classroom">
+                <span class="glyphicon glyphicon-plus"></span>Add a classroom
+        </button>
+        </p>
+
+    </div>
+    <div class="col-md-9">
+    </br>
+    {% for classroom in classrooms %}
+         <div class="col-md-8 col-lg-2">
+             <div class="thumbnail">
+                 <div class="caption">
+                   <a href="{% url 'myclass' classroom.id %}"><h2>{{ classroom.classroom_title }}</h2></a>
+                 </div>
+             </div>
+         </div>
+
+     {% endfor %}
+      <!-- THE MODAL WE WILL BE USING -->
+      <div class="modal fade" id="modal-class">
+        <div class="modal-dialog">
+      <div class="modal-content">
+      </div>
+    </div>
+</div>
+</div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+$(function () {
+//create classroom button click
+  $(".js-create-classroom").click(function () {
+
+    $.ajax({
+      url: '/classroom/create/',
+      type: 'get',
+      dataType: 'json',
+      beforeSend: function () {
+        $("#modal-class").modal("show");
+      },
+      success: function (data) {
+        $("#modal-class .modal-content").html(data.html_form);
+      }
+    });
+  });
+
+});
+
+
+$("#modal-class").on("submit", ".js-classroom-create-form", function () {
+
+  //data sending
+    $.ajax({
+    url: '/classroom/create/',
+    data:data = {
+        'classroom_title':$('#classroom_title').val(),
+         'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()
+      },
+    type: 'post',
+    dataType: 'json',
+    success: function (data) {
+      if (data.form_is_valid) {
+            $("#modal-class").modal("hide");
+            window.location.reload();
+            }
+      else {
+        $("#modal-class .modal-content").html(data.html_form);
+      }
+    }
+  });
+  return false;
+})
+</script>
+
+
+{% endblock %}
